@@ -1,0 +1,109 @@
+[package]
+name = "novus-writer"
+version = "0.1.0"
+description = "A modern, offline-first desktop notes application inspired by Microsoft Word"
+authors = ["Novus Writer Team"]
+license = "MIT"
+repository = "https://github.com/novus-writer/novus-writer"
+edition = "2021"
+
+[lib]
+name = "novus_writer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+# Tauri v2
+tauri = { version = "2.0", features = ["tray-icon", "image-png"] }
+tauri-plugin-shell = "2.0"
+tauri-plugin-dialog = "2.0"
+tauri-plugin-fs = "2.0"
+tauri-plugin-http = "2.0"
+
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "sqlite"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Compression for .notes format
+flate2 = "1.0"
+base64 = "0.21"
+
+# Image processing
+image = { version = "0.24", default-features = false, features = ["png", "jpeg"] }
+
+# PDF generation (placeholder for future implementation)
+# printpdf = "0.6"
+
+# DOCX handling (placeholder for future implementation)
+# docx-rs = "0.4"
+
+# UUID for document IDs
+uuid = { version = "1.6", features = ["v4", "serde"] }
+
+# Chrono for timestamps
+chrono = { version = "0.4", features = ["serde"] }
+
+# Directories for platform-specific paths
+dirs = "5.0"
+
+# MIME type detection
+mime_guess = "2.0"
+
+# URL parsing
+url = "2.5"
+
+# Regex for find/replace
+regex = "1.10"
+
+# State management
+once_cell = "1.19"
+
+# Plugin trait support
+trait-variant = "0.1"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-autostart = "2.0"
+tauri-plugin-single-instance = "2.0"
+
+[dev-dependencies]
+tokio-test = "0.4"
+tempfile = "3.9"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "editor_benchmarks"
+harness = false
+
+[[bench]]
+name = "database_benchmarks"
+harness = false
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
+
+[profile.dev]
+debug = true
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

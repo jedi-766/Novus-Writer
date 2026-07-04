@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json.schemastore.org/tauri-config-2.0.json",
+  "productName": "Novus Writer",
+  "version": "0.1.0",
+  "identifier": "com.novuswriter.app",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "frontendDist": "../frontend/dist",
+    "devUrl": "http://localhost:5173"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "Novus Writer",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true,
+        "transparent": false,
+        "center": true,
+        "visible": true,
+        "focus": true,
+        "maximizable": true,
+        "minimizable": true,
+        "closable": true,
+        "shadow": true,
+        "titleBarStyle": "Visible"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "rpm", "appimage"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": [],
+    "linux": {
+      "deb": {
+        "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0", "libayatana-appindicator3-1"]
+      },
+      "rpm": {
+        "depends": ["webkit2gtk4.1", "gtk3", "libappindicator-gtk3"]
+      },
+      "files": {}
+    },
+    "category": "Office",
+    "shortDescription": "A modern, offline-first desktop notes application",
+    "longDescription": "Novus Writer is a production-quality offline desktop notes application for Linux that feels like Microsoft Word while remaining lightweight and fully offline. Features rich text editing, document management, tables, images, shapes, headers/footers, export to multiple formats, and more.",
+    "copyright": "© 2024 Novus Writer Team",
+    "license": "MIT"
+  },
+  "plugins": {
+    "shell": {
+      "open": true
+    },
+    "dialog": {
+      "all": true
+    },
+    "fs": {
+      "scope": ["**"],
+      "all": true
+    }
+  }
+}
