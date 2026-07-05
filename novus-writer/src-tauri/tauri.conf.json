@@ -53,8 +53,7 @@
       },
       "rpm": {
         "depends": ["webkit2gtk4.1", "gtk3", "libappindicator-gtk3"]
-      },
-      "files": {}
+      }
     },
     "category": "Office",
     "shortDescription": "A modern, offline-first desktop notes application",
