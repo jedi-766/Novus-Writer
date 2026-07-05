@@ -22,16 +22,40 @@ import { useEditorStore } from '../../stores/editorStore';
 interface LexicalEditorProps {
   documentId?: string;
   initialContent?: string;
+  onContentChange?: (content: string, wordCount: number, charCount: number) => void;
+  onEditorInit?: (editor: any) => void;
 }
 
 const editorNodes = [ImageNode, TableNode, HorizontalRuleNode, CodeNode];
 
-export function LexicalEditorComponent({ documentId, initialContent }: LexicalEditorProps) {
+export function LexicalEditorComponent({ 
+  documentId, 
+  initialContent,
+  onContentChange,
+  onEditorInit 
+}: LexicalEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { activeDocument } = useEditorStore();
+  const { setDirty } = useEditorStore();
 
-  const handleEditorChange = (editorState: any) => {
-    // Handle editor state changes if needed
+  const handleEditorChange = async (editorState: any, editor: any) => {
+    if (setDirty) {
+      setDirty(true);
+    }
+    
+    if (onContentChange) {
+      try {
+        const content = JSON.stringify(editorState.toJSON());
+        onContentChange(content, 0, 0);
+      } catch (err) {
+        console.error('Error serializing editor state:', err);
+      }
+    }
+  };
+
+  const handleEditorReady = (editor: any) => {
+    if (onEditorInit) {
+      onEditorInit(editor);
+    }
   };
 
   const initialConfig = {
@@ -55,10 +79,10 @@ export function LexicalEditorComponent({ documentId, initialContent }: LexicalEd
           <TablePlugin />
           <KeyboardShortcutsPlugin />
           <SpellCheckPlugin />
-          <WordCountPlugin />
+          <WordCountPlugin onWordCountChange={onContentChange} />
           <ToolbarSyncPlugin />
-          {documentId && <AutoSavePlugin documentId={documentId} interval={30000} />}
-          <OnChangePlugin onChange={handleEditorChange} />
+          {documentId && <AutoSavePlugin documentId={parseInt(documentId, 10)} interval={30000} />}
+          <OnChangePlugin onChange={handleEditorChange} onEditorReady={handleEditorReady} />
         </div>
       </LexicalComposer>
     </div>

@@ -1,11 +1,29 @@
 export interface Document {
-  id: string;
+  id: number;
   title: string;
   content?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   wordCount: number;
   characterCount: number;
+  folderId?: number;
+  isDeleted?: boolean;
+  metadata?: DocumentMetadata;
+}
+
+export interface DocumentMetadata {
+  author?: string;
+  tags?: string[];
+  category?: string;
+  customFields?: Record<string, string>;
+}
+
+export interface DocumentFolder {
+  id: number;
+  name: string;
+  parentId?: number;
+  createdAt: string;
+  documentCount: number;
 }
 
 export interface EditorStore {
