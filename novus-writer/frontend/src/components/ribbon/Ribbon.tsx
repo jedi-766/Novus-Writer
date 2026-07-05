@@ -5,12 +5,15 @@ import { HomeTab } from './HomeTab';
 import { InsertTab } from './InsertTab';
 import { LayoutTab } from './LayoutTab';
 import { ViewTab } from './ViewTab';
+import { ExportTab } from './ExportTab';
+import { ImportTab } from './ImportTab';
+import { ReviewTab } from './ReviewTab';
 
 interface RibbonProps {
   editor: LexicalEditor;
 }
 
-type TabType = 'home' | 'insert' | 'layout' | 'view';
+type TabType = 'home' | 'insert' | 'layout' | 'view' | 'export' | 'import' | 'review';
 
 export function Ribbon({ editor }: RibbonProps) {
   const { activeRibbonTab, setActiveRibbonTab, isRibbonMinimized, toggleRibbonMinimized } = useUIStore();
@@ -21,6 +24,9 @@ export function Ribbon({ editor }: RibbonProps) {
     { id: 'insert', label: 'Insert' },
     { id: 'layout', label: 'Layout' },
     { id: 'view', label: 'View' },
+    { id: 'export', label: 'Export' },
+    { id: 'import', label: 'Import' },
+    { id: 'review', label: 'Review' },
   ];
 
   const renderTabContent = () => {
@@ -33,6 +39,12 @@ export function Ribbon({ editor }: RibbonProps) {
         return <LayoutTab editor={editor} />;
       case 'view':
         return <ViewTab editor={editor} />;
+      case 'export':
+        return <ExportTab editor={editor} />;
+      case 'import':
+        return <ImportTab editor={editor} />;
+      case 'review':
+        return <ReviewTab editor={editor} />;
       default:
         return <HomeTab editor={editor} />;
     }

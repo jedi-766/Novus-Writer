@@ -1,126 +1,184 @@
 //! Export commands - Tauri command handlers for document export operations
 
+use std::path::PathBuf;
+
 use crate::models::error::AppError;
+use crate::services::export_service::{ExportFormat, ExportService};
+use crate::database::Database;
 
 /// Export document to PDF
 #[tauri::command]
 pub async fn export_pdf(
-    _doc_id: String,
-    _content: String,
-    _output_path: String,
-) -> Result<(), AppError> {
-    // TODO: Implement PDF export using a PDF library
-    tracing::warn!("PDF export not yet implemented");
-    Err(AppError::ExportError("PDF export not yet implemented".to_string()))
+    db: tauri::State<'_, Database>,
+    doc_id: String,
+    output_path: String,
+) -> Result<String, AppError> {
+    tracing::info!("Exporting document {} to PDF: {}", doc_id, output_path);
+    
+    // Get document from database
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
+    
+    let path = PathBuf::from(&output_path);
+    
+    // Use export service
+    match ExportService::export_to_pdf(&document, &path) {
+        Ok(_) => Ok(output_path),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
 }
 
 /// Export document to DOCX
 #[tauri::command]
 pub async fn export_docx(
-    _doc_id: String,
-    _content: String,
-    _output_path: String,
-) -> Result<(), AppError> {
-    // TODO: Implement DOCX export using docx-rs or similar
-    tracing::warn!("DOCX export not yet implemented");
-    Err(AppError::ExportError("DOCX export not yet implemented".to_string()))
+    db: tauri::State<'_, Database>,
+    doc_id: String,
+    output_path: String,
+) -> Result<String, AppError> {
+    tracing::info!("Exporting document {} to DOCX: {}", doc_id, output_path);
+    
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
+    
+    let path = PathBuf::from(&output_path);
+    
+    match ExportService::export_to_docx(&document, &path) {
+        Ok(_) => Ok(output_path),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
 }
 
 /// Export document to Markdown
 #[tauri::command]
-pub fn export_markdown(
-    _doc_id: String,
-    content: String,
+pub async fn export_markdown(
+    db: tauri::State<'_, Database>,
+    doc_id: String,
     output_path: String,
 ) -> Result<String, AppError> {
-    // Convert Lexical JSON to Markdown
-    // TODO: Implement proper conversion using @lexical/markdown on frontend
-    // or implement backend conversion here
+    tracing::info!("Exporting document {} to Markdown: {}", doc_id, output_path);
     
-    tracing::debug!("Markdown export requested to: {}", output_path);
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
     
-    // Placeholder - return the path
-    Ok(output_path)
+    let path = PathBuf::from(&output_path);
+    
+    match ExportService::export_to_markdown(&document, &path) {
+        Ok(_) => Ok(output_path),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
 }
 
 /// Export document to HTML
 #[tauri::command]
-pub fn export_html(
-    _doc_id: String,
-    content: String,
+pub async fn export_html(
+    db: tauri::State<'_, Database>,
+    doc_id: String,
     output_path: String,
 ) -> Result<String, AppError> {
-    // Convert Lexical JSON to HTML
-    // TODO: Implement proper conversion
+    tracing::info!("Exporting document {} to HTML: {}", doc_id, output_path);
     
-    tracing::debug!("HTML export requested to: {}", output_path);
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
     
-    // Create basic HTML structure
-    let html = format!(
-        r#"<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novus Writer Document</title>
-    <style>
-        body {{
-            font-family: Calibri, Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            line-height: 1.6;
-        }}
-    </style>
-</head>
-<body>
-    {}
-</body>
-</html>"#,
-        content
-    );
+    let path = PathBuf::from(&output_path);
     
-    // Write to file (in production, use proper file I/O)
-    std::fs::write(&output_path, html)
-        .map_err(|e| AppError::FileError(e.to_string()))?;
-    
-    Ok(output_path)
+    match ExportService::export_to_html(&document, &path) {
+        Ok(_) => Ok(output_path),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
 }
 
 /// Export document to RTF
 #[tauri::command]
-pub fn export_rtf(
-    _doc_id: String,
-    _content: String,
-    _output_path: String,
+pub async fn export_rtf(
+    db: tauri::State<'_, Database>,
+    doc_id: String,
+    output_path: String,
 ) -> Result<String, AppError> {
-    // TODO: Implement RTF export
-    tracing::warn!("RTF export not yet implemented");
-    Err(AppError::ExportError("RTF export not yet implemented".to_string()))
+    tracing::info!("Exporting document {} to RTF: {}", doc_id, output_path);
+    
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
+    
+    let path = PathBuf::from(&output_path);
+    
+    match ExportService::export_to_rtf(&document, &path) {
+        Ok(_) => Ok(output_path),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
 }
 
 /// Export document to plain text
 #[tauri::command]
-pub fn export_txt(
-    _doc_id: String,
-    content: String,
+pub async fn export_txt(
+    db: tauri::State<'_, Database>,
+    doc_id: String,
     output_path: String,
 ) -> Result<String, AppError> {
-    // Extract plain text from Lexical JSON
-    // TODO: Implement proper extraction
+    tracing::info!("Exporting document {} to TXT: {}", doc_id, output_path);
     
-    tracing::debug!("TXT export requested to: {}", output_path);
-    Ok(output_path)
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
+    
+    let path = PathBuf::from(&output_path);
+    
+    match ExportService::export_to_plain_text(&document, &path) {
+        Ok(_) => Ok(output_path),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
 }
 
 /// Export document to ODT
 #[tauri::command]
 pub async fn export_odt(
-    _doc_id: String,
-    _content: String,
-    _output_path: String,
-) -> Result<(), AppError> {
-    // TODO: Implement ODT export
-    tracing::warn!("ODT export not yet implemented");
-    Err(AppError::ExportError("ODT export not yet implemented".to_string()))
+    db: tauri::State<'_, Database>,
+    doc_id: String,
+    output_path: String,
+) -> Result<String, AppError> {
+    tracing::info!("Exporting document {} to ODT: {}", doc_id, output_path);
+    
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
+    
+    let path = PathBuf::from(&output_path);
+    
+    match ExportService::export_to_odt(&document, &path) {
+        Ok(_) => Ok(output_path),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
+}
+
+/// Generic export command that auto-detects format from file extension
+#[tauri::command]
+pub async fn export_document(
+    db: tauri::State<'_, Database>,
+    doc_id: String,
+    output_path: String,
+) -> Result<String, AppError> {
+    tracing::info!("Auto-exporting document {} to: {}", doc_id, output_path);
+    
+    let document = db.get_document(&doc_id)
+        .map_err(|e| AppError::DatabaseError(e.to_string()))?
+        .ok_or_else(|| AppError::NotFoundError(format!("Document {} not found", doc_id)))?;
+    
+    // Detect format from extension
+    let path = PathBuf::from(&output_path);
+    let extension = path.extension()
+        .and_then(|ext| ext.to_str())
+        .unwrap_or("txt");
+    
+    let format = ExportFormat::from_extension(extension)
+        .unwrap_or(ExportFormat::PlainText);
+    
+    match ExportService::export(&document, format, path) {
+        Ok(p) => Ok(p.to_string_lossy().to_string()),
+        Err(e) => Err(AppError::ExportError(e)),
+    }
 }
