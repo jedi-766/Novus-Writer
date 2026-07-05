@@ -1,64 +1,47 @@
 ```
-# Dependencies
-node_modules/
+# Rust/Cargo specific
 target/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-.ENV
-.python-version
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-*.tmp
-*.swp
-*.swo
-.DS_Store
-Thumbs.db
-
-# Rust/Cargo
 Cargo.lock
-target/
 **/*.rs.bk
-*.lock
 
-# Tauri
+# Tauri specific
 src-tauri/target/
 src-tauri/Cargo.lock
+**/tauri.log
 
-# Environment variables
+# Database
+*.db
+*.db-journal
+
+# Dependencies
+**/node_modules/
+
+# Compiled and build artifacts
+**/dist/
+**/build/
+**/release/
+**/debug/
+
+# Logs
+*.log
+**/*.log
+
+# Temporary files
+*.tmp
+**/*.tmp
+
+# Environment
 .env
 .env.local
 .env.*
-!.env.example
 
-# IDE
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
+**/.vscode/
+**/.idea/
 
-# Build outputs
-dist/
-build/
-*.exe
-*.dll
-*.so
-*.a
-*.obj
-*.out
+# OS
+.DS_Store
+Thumbs.db
 ```
